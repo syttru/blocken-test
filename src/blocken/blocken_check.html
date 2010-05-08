@@ -1,0 +1,153 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>Blocken インストールチェッカー</title>
+<link rel="shortcut icon" href="favicon.ico" />
+</head>
+<body>
+<?php
+    $bErr = false;
+
+    if ( ! @$bAutoPrependFile )
+    {
+        echo 'auto_prepend_fileのパスが間違っています。<br />';
+        $bErr = true;
+    }
+    else
+    {
+        if ( ! extension_loaded( 'curl' ) )
+        {
+            echo 'cURL拡張モジュールがロードされていません。<br />';
+            $bErr = true;
+        }
+
+        if ( ! extension_loaded( 'gd' ) )
+        {
+            echo 'GD拡張モジュールがロードされていません。<br />';
+            $bErr = true;
+        }
+
+        if ( ! extension_loaded( 'mbstring' ) )
+        {
+            echo 'mbstring拡張モジュールがロードされていません。<br />';
+            $bErr = true;
+        }
+
+        if ( ! extension_loaded( 'xml' ) )
+        {
+            echo 'XML拡張モジュールがロードされていません。<br />';
+            $bErr = true;
+        }
+
+        $bIncludePath = true;
+        @include 'System.php';
+        if ( ! class_exists( 'System' ) )
+        {
+            echo 'include_pathが正しく設定されていません。<br />';
+            $bErr = true;
+            $bIncludePath = false;
+        }
+
+        if ( $bIncludePath )
+        {
+            $aryCheckPear = array();
+            @include 'Auth.php';
+            if ( ! class_exists( 'Auth' ) )
+            {
+                $aryCheckPear[] = 'Auth';
+            }
+            @include 'Auth/HTTP.php';
+            if ( ! class_exists( 'Auth_HTTP' ) )
+            {
+                $aryCheckPear[] = 'Auth_HTTP';
+            }
+            @include 'Cache.php';
+            if ( ! class_exists( 'Cache' ) )
+            {
+                $aryCheckPear[] = 'Cache';
+            }
+            @include 'File/Archive.php';
+            if ( ! class_exists( 'File_Archive' ) )
+            {
+                $aryCheckPear[] = 'File_Archive';
+            }
+            @include 'File/Passwd.php';
+            if ( ! class_exists( 'File_Passwd' ) )
+            {
+                $aryCheckPear[] = 'File_Passwd';
+            }
+            @include 'HTML/Template/Sigma.php';
+            if ( ! class_exists( 'HTML_Template_Sigma' ) )
+            {
+                $aryCheckPear[] = 'HTML_Template_Sigma';
+            }
+            @include 'HTTP/Session.php';
+            if ( ! class_exists( 'HTTP_Session' ) )
+            {
+                $aryCheckPear[] = 'HTTP_Session';
+            }
+            @include 'Log.php';
+            if ( ! class_exists( 'Log' ) )
+            {
+                $aryCheckPear[] = 'Log';
+            }
+            @include 'Net/Curl.php';
+            if ( ! class_exists( 'Net_Curl' ) )
+            {
+                $aryCheckPear[] = 'Net_Curl';
+            }
+            @include 'Net/UserAgent/Mobile.php';
+            if ( ! class_exists( 'Net_UserAgent_Mobile' ) )
+            {
+                $aryCheckPear[] = 'Net_UserAgent_Mobile';
+            }
+            @include 'MDB2.php';
+            if ( ! class_exists( 'MDB2' ) )
+            {
+                $aryCheckPear[] = 'MDB2';
+            }
+            if ( 6 != ( @include 'PhpDocumentor/phpDocumentor/find_phpdoc.php' ) )
+            {
+                $aryCheckPear[] = 'phpDocumentor';
+            }
+            @include 'Text/Diff.php';
+            if ( ! class_exists( 'Text_Diff' ) )
+            {
+                $aryCheckPear[] = 'Text_Diff';
+            }
+            if ( ! empty( $aryCheckPear ) )
+            {
+                echo '以下のPEARライブラリがインストールされていません。<br />';
+                echo '(include_path = ' . ini_get( 'include_path' ) . ')<br />';
+                foreach ( $aryCheckPear as $sRow )
+                {
+                    echo "<li>{$sRow}</li><br />";
+                }
+                $bErr = true;
+            }
+        }
+    }
+
+    if ( $bErr )
+    {
+        echo 'もう一度readme.txtの手順に従ってインストールしてください。';
+    }
+    else
+    {
+        echo 'Blockenは正常にインストールされています。';
+    }
+
+    if ( ! extension_loaded( 'tidy' ) )
+    {
+        echo '<br /><br />Warning!<br />';
+        echo 'Tidy拡張モジュールがロードされていません。<br />';
+        echo 'BLOCKタグの属性値を必ずシングルクウォートかダブルクウォートで囲んでください。';
+    }
+
+    echo '</body></html>';
+    exit;
+?>
+.htaccessファイルが存在しないかhtaccess機能が有効になっていません。<br />
+ファイルを確認しApacheの設定をみなおしてください。
+</body>
+</html>

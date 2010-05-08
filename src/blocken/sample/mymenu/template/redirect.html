@@ -1,0 +1,28 @@
+<html>
+<head>
+<title>確認</title>
+</head>
+<body>
+<div align="center">
+<!-- BEGIN regist -->
+登録します。よろしいですか？
+<form method="post" action="regist.php">
+<input type="hidden" name="_rtn" value="{return}" />
+<input type="hidden" name="arg1" value="{carrier}" />
+<input type="submit" value="登録" />
+</form>
+<!-- END regist -->
+<!-- BEGIN expire -->
+削除します。よろしいですか？
+<form method="post" action="expire.php">
+<input type="hidden" name="_rtn" value="{return}" />
+<input type="hidden" name="arg1" value="{carrier}" />
+<input type="submit" value="削除" />
+</form>
+<!-- END expire -->
+<!-- BEGIN error -->
+<a href="{return}">次へ</a>
+<!-- END error -->
+</div>
+</body>
+</html>

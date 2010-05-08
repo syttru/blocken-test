@@ -1,0 +1,303 @@
+<!-- BEGIN sample1 -->
+<h1>サンプル1：変数を設定</h1>
+<b>■基本例</b><br />
+<b>・スクリプト内の記述</b>
+<pre>
+$objTemplate->setVariable( 'sample1', 'サンプル' );
+</pre>
+<b>・テンプレート内の記述</b>
+<pre>
+｛sample｝
+</pre>
+<b>・出力結果</b><br />
+{sample}<br />
+<br />
+<b>■応用例</b><br />
+<b>・スクリプト内で出力方法を指定</b><br />
+kana = [ {b_kana} ] → [ {a_kana} ]<br />
+date = [ {b_date} ] → [ {a_date} ]<br />
+money = [ {b_money} ] → [ {a_money} ]<br />
+urlencode = [ {b_url} ] → [ {a_url} ]<br />
+nl2br = [ {b_nl2br} ] → [ {a_nl2br} ]<br />
+<br />
+<b>・テンプレート内で出力方法を指定</b><br />
+func_k kana = [ {b_kana} ] → [ func_k( '{b_kana}', 'k' ) ]<br />
+func_d date = [ {b_date} ] → [ func_d( '{b_date}', 'Y年m月d日' ) ]<br />
+func_m money = [ {b_money} ] → [ func_m( '{b_money}', 2 ) ]<br />
+func_u urlencode = [ {b_url} ] → [ func_u( '{b_url}' ) ]<br />
+func_b nl2br = [ {b_nl2br} ] → [ func_b( '{b_nl2br}' ) ]<br />
+<br />
+<b>・テンプレート内で出力方法を指定2</b><br />
+func_c kana = [ {b_kana} ] → [ func_c( '{b_kana}', 'k' ) ]<br />
+func_c date = [ {b_date} ] → [ func_c( '{b_date}', 'd', 'Y年m月d日' ) ]<br />
+func_c money = [ {b_money} ] → [ func_c( '{b_money}', 'm', 2 ) ]<br />
+func_c urlencode = [ {b_url} ] → [ func_c( '{b_url}', 'u' ) ]<br />
+func_c nl2br = [ {b_nl2br} ] → [ func_c( '{b_nl2br}', 'b' ) ]<br />
+<!-- END sample1 -->
+
+<!-- BEGIN sample2 -->
+<h1>サンプル2：パスを設定</h1>
+<b>■例</b><br />
+<b>・テンプレート内の記述</b>
+<pre>
+&lt;img src="％IMG_PATH％/brocken.jpg" /&gt;
+</pre>
+<b>・出力結果</b><br />
+<img src="%IMG_PATH%/brocken.jpg" /><br />
+<br />
+他にも％HTTP_URL％、％HTTPS_URL％、％PHP_SELF％、％ROOT_PATH％、％CSS_PATH％、％JS_PATH％が使用できる
+<!-- END sample2 -->
+
+<!-- BEGIN sample3 -->
+<h1>サンプル3：ループ文</h1>
+<b>■例</b><br />
+<b>・スクリプト内の記述</b>
+<pre>
+for ( $i = 0; $i &lt;= 10; $i++ )
+{
+　　$objTemplate-&gt;setCurrentBlock( 'loop' );
+　　$objTemplate-&gt;setVariable( 'count', $i );
+　　$objTemplate-&gt;parseCurrentBlock();
+}
+</pre>
+<b>・テンプレート内の記述</b>
+<pre>
+&lt;!-- BEGIN loop --&gt;
+ループ｛count｝&lt;br /&gt;
+&lt;!-- END loop --&gt;
+</pre>
+<b>・出力結果</b><br />
+<!-- BEGIN loop -->
+ループ{count}<br />
+<!-- END loop -->
+<!-- END sample3 -->
+
+<!-- BEGIN sample4 -->
+<h1>サンプル4：if文</h1>
+<b>■例</b><br />
+<b>・スクリプト内の記述</b>
+<pre>
+if ( ! isset( $aryParam[ 'anser' ] ) )
+{
+　　$objTemplate-&gt;touchBlock( 'question' );
+　　$objTemplate-&gt;hideBlock( 'anser' );
+}
+else
+{
+　　$objTemplate-&gt;touchBlock( 'anser' );
+　　$objTemplate-&gt;hideBlock( 'question' );
+
+　　if ( 'リキシマン' == $aryParam[ 'anser' ] )
+　　{
+　　　　$objTemplate-&gt;touchBlock( 'true' );
+　　　　$objTemplate-&gt;hideBlock( 'false' );
+　　}
+　　else
+　　{
+　　　　$objTemplate-&gt;touchBlock( 'false' );
+　　　　$objTemplate-&gt;hideBlock( 'true' );
+　　}
+}
+</pre>
+<b>・テンプレート内の記述</b>
+<pre>
+&lt;!-- BEGIN question --&gt;
+&lt;form method="post" action="％PHP_SELF％"&gt;
+&lt;input type="hidden" name="sample" value="4" /&gt;
+ウルフマンのアニメ版の名前は？&lt;br /&gt;
+&lt;input type="text" name="anser" size="20" /&gt;&lt;br /&gt;
+&lt;input type="submit" value="解答" /&gt;
+&lt;/form&gt;
+&lt;!-- END question --&gt;
+&lt;!-- BEGIN anser --&gt;
+&lt;!-- BEGIN true --&gt;
+ご名答！
+&lt;!-- END true --&gt;
+&lt;!-- BEGIN false --&gt;
+「リキシマン」と答えて頂きたかった
+&lt;!-- END false --&gt;
+&lt;!-- END anser --&gt;
+</pre>
+<b>・出力結果</b><br />
+<!-- BEGIN question -->
+<form method="post" action="%PHP_SELF%">
+<input type="hidden" name="sample" value="4" />
+ウルフマンのアニメ版の名前は？<br />
+<input type="text" name="anser" size="20" /><br />
+<input type="submit" value="解答" />
+</form>
+<!-- END question -->
+<!-- BEGIN anser -->
+<!-- BEGIN true -->
+ご名答！
+<!-- END true -->
+<!-- BEGIN false -->
+「リキシマン」と答えて頂きたかった
+<!-- END false -->
+<!-- END anser -->
+<!-- END sample4 -->
+
+<!-- BEGIN sample5 -->
+<h1>サンプル5：ループ文内のif文</h1>
+<b>■例</b><br />
+<b>・スクリプト内の記述</b>
+<pre>
+for ( $i = 1; $i &lt;= 10; $i++ )
+{
+　　$objTemplate->setCurrentBlock( 'loopif' );
+　　$objTemplate->setVariable( 'count', $i );
+　　if ( 5 == $i )
+　　{
+　　　　$objTemplate-&gt;touchBlock( 'abnormal' );
+　　　　$objTemplate-&gt;hideBlock( 'normal' );
+　　}
+　　else
+　　{
+　　　　$objTemplate-&gt;touchBlock( 'normal' );
+　　　　$objTemplate-&gt;hideBlock( 'abnormal' );
+　　}
+　　$objTemplate-&gt;parseCurrentBlock();
+}
+</pre>
+<b>・テンプレート内の記述</b>
+<pre>
+&lt;!-- BEGIN loopif --&gt;
+&lt;!-- BEGIN normal --&gt;
+ループ｛count｝&lt;br /&gt;
+&lt;!-- END normal --&gt;
+&lt;!-- BEGIN abnormal --&gt;
+ループ｛count｝ 疲れたなあ&lt;br /&gt;
+&lt;!-- END abnormal --&gt;
+&lt;!-- END loopif --&gt;
+</pre>
+<b>・出力結果</b><br />
+<!-- BEGIN loopif -->
+<!-- BEGIN normal -->
+ループ{count}<br />
+<!-- END normal -->
+<!-- BEGIN abnormal -->
+ループ{count} 疲れたなあ<br />
+<!-- END abnormal -->
+<!-- END loopif -->
+<!-- END sample5 -->
+
+<!-- BEGIN sample6 -->
+<h1>サンプル6：ブロック設定パラメータ</h1>
+<b>■例</b><br />
+<b>・ブロック呼び出し元の記述</b>
+<pre>
+&lt;block type="dynamic" name="sample" default="@hoge.com" maxcount="10" /&gt;&lt;br /&gt;
+</pre>
+<b>・スクリプト内の記述</b>
+<pre>
+if ( ! isset( $aryParam[ 'email' ] ) )
+{
+　　$objTemplate-&gt;setVariable( 'email', $aryArgs[ 'default' ] );
+}
+else
+{
+　　$objTemplate-&gt;setVariable( 'email', $aryParam[ 'email' ] );
+}
+
+for ( $i = 1; $i &lt;= $aryArgs[ 'maxcount' ]; $i++ )
+{
+　　$objTemplate-&gt;setCurrentBlock( 'loop_block' );
+　　$objTemplate-&gt;setVariable( 'count', $i );
+　　$objTemplate-&gt;parseCurrentBlock();
+}
+</pre>
+<b>・テンプレート内の記述</b>
+<pre>
+&lt;form method="post" action="％PHP_SELF％"&gt;
+&lt;input type="hidden" name="sample" value="6" /&gt;
+メールアドレス&lt;br /&gt;
+&lt;input type="text" name="email" size="20" value="｛email｝" /&gt;&lt;br /&gt;
+&lt;input type="submit" value="登録" /&gt;
+&lt;/form&gt;
+&lt;!-- BEGIN loop_block --&gt;
+ループ｛count｝&lt;br /&gt;
+&lt;!-- END loop_block --&gt;
+</pre>
+<b>・出力結果</b><br />
+<form method="post" action="%PHP_SELF%">
+<input type="hidden" name="sample" value="6" />
+メールアドレス<br />
+<input type="text" name="email" size="20" value="{email}" /><br />
+<input type="submit" value="登録" />
+</form>
+<!-- BEGIN loop_block -->
+ループ{count}<br />
+<!-- END loop_block -->
+<!-- END sample6 -->
+
+<!-- BEGIN sample7 -->
+<h1>サンプル７：PEARオブジェクト</h1>
+<b>■例</b><br />
+<b>・スクリプト内の記述</b>
+<pre>
+ob_start();
+$aryPear[ 'auth' ]-&gt;start();
+$sAuth = ob_get_clean();
+$sAuth = str_replace( '&lt;/form&gt;', '&lt;input type="hidden" name="sample" value="7" /&gt;&lt;/form&gt;', $sAuth );
+$objTemplate-&gt;setVariable( 'auth', $sAuth, 'h' );
+if ( $aryPear[ 'auth' ]-&gt;getAuth() )
+{
+　　$objTemplate-&gt;setVariable( 'auth', '認証成功！' );
+}
+//$aryPear[ 'auth' ]-&gt;logout();
+//$aryPear[ 'auth' ]-&gt;start();
+
+if ( ! $aryPear[ 'cookie' ]-&gt;get( 'cookie' ) )
+{
+　　$aryPear[ 'cookie' ]-&gt;set( 'cookie', date( 'Y/m/d H:i:s' ) );
+}
+else
+{
+　　$objTemplate-&gt;setVariable( 'cookie', $aryPear[ 'cookie' ]-&gt;get( 'cookie' ) );
+}
+//$aryPear[ 'cookie' ]-&gt;delete( 'cookie' );
+
+$mRet = $aryPear[ 'db' ]-&gt;connect( BLOCKEN_DB_DSN_SAMPLE, array( 'persistent' =&gt; true, 'debug' =&gt; 1 ) );
+if ( ! MDB2::isError( $mRet ) )
+{
+　　$aryRet = $aryPear[ 'db' ]-&gt;getAll( BLOCKEN_DB_DSN_SAMPLE, 'select * from sample' );
+　　//$aryRet = $aryPear[ 'db' ]-&gt;getRow( BLOCKEN_DB_DSN_SAMPLE, 'SELECT * FROM sample' );
+　　//$sRet　 = $aryPear[ 'db' ]-&gt;getOne( BLOCKEN_DB_DSN_SAMPLE, 'SELECT val FROM sample where id = 1' );
+　　//$objRet = $aryPear[ 'db' ]-&gt;query( BLOCKEN_DB_DSN_SAMPLE, 'SELECT * FROM sample' );
+　　//while ( $aryRow = $objRet-&gt;fetchRow() )
+　　//{
+　　//}
+　　$objTemplate-&gt;setVariable( 'db', var_export( $aryRet, true ) );
+}
+else
+{
+　　$objTemplate-&gt;setVariable( 'db', '接続エラー！' );
+}
+
+if ( ! $aryPear[ 'session' ]-&gt;get( 'session' ) )
+{
+　　$aryPear[ 'session' ]-&gt;set( 'session', date( 'Y/m/d H:i:s' ) );
+}
+else
+{
+　　$objTemplate-&gt;setVariable( 'session', $aryPear[ 'session' ]-&gt;get( 'session' ) );
+}
+
+$aryPear[ 'log' ]-&gt;emerg( 'emergなメッセージ' );
+$aryPear[ 'log' ]-&gt;alert( 'alertなメッセージ' );
+$aryPear[ 'log' ]-&gt;crit( 'critなメッセージ' );
+$aryPear[ 'log' ]-&gt;err( 'errなメッセージ' );
+$aryPear[ 'log' ]-&gt;warning( 'warningなメッセージ' );
+$aryPear[ 'log' ]-&gt;notice( 'noticeなメッセージ' );
+$aryPear[ 'log' ]-&gt;info( 'infoなメッセージ' );
+$aryPear[ 'log' ]-&gt;debug( 'debugなメッセージ' );
+$aryPear[ 'log' ]-&gt;debug( $aryPear[ 'db' ]-&gt;debug( BLOCKEN_DB_DSN_SAMPLE ) );
+</pre>
+<b>・出力結果</b><br />
+{auth}
+<pre>
+db = {db}
+</pre>
+session = {session}<br />
+cookie = {cookie}<br />
+<!-- END sample7 -->

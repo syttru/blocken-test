@@ -1,0 +1,47 @@
+# php script
+AddType application/x-httpd-php .php .html .htm .xhtml .xhtm .xml .hdml
+
+# blocken prepend file
+php_value auto_prepend_file {BlockenPath}/.Blocken/prepend.php
+
+# restrict access
+#Order deny,allow
+#Deny from all
+## DoCoMo
+#Allow from 210.153.84.0/24
+#Allow from 210.136.161.0/24
+#Allow from 210.153.86.0/24
+#Allow from 124.146.174.0/24
+## EZweb
+#Allow from 210.230.128.224/28
+#Allow from 121.111.227.160/27
+#Allow from 61.117.1.0/28
+#Allow from 219.108.158.0/27
+#Allow from 219.125.146.0/28
+#Allow from 61.117.2.32/29
+#Allow from 61.117.2.40/29
+#Allow from 219.108.158.40/29
+#Allow from 219.125.148.0/25
+#Allow from 222.5.63.0/25
+#Allow from 222.5.63.128/25
+#Allow from 222.5.62.128/25
+#Allow from 59.135.38.128/25
+#Allow from 219.108.157.0/25
+#Allow from 219.125.145.0/25
+#Allow from 121.111.231.0/25
+#Allow from 121.111.227.0/25
+#Allow from 118.152.214.192/26
+#Allow from 118.159.131.0/25
+#Allow from 118.159.133.0/25
+## SoftBank
+#Allow from 123.108.236.0/24
+#Allow from 123.108.237.0/27
+#Allow from 202.179.204.0/24
+#Allow from 202.253.96.224/27
+#Allow from 210.146.7.192/26
+#Allow from 210.146.60.192/26
+#Allow from 210.151.9.128/26
+#Allow from 210.169.130.112/28
+#Allow from 210.175.1.128/25
+#Allow from 210.228.189.0/24
+#Allow from 211.8.159.128/25

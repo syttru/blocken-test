@@ -1,0 +1,406 @@
+<?php
+/**
+ * config.php
+ *
+ * PHP versions 4 and 5
+ *
+ * @package   Blocken
+ * @author    Kouhei Suzuki <sigma@mfer.jp>
+ * @copyright 2006-2009 SIGMA Project
+ * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version   $Id: config.php 27 2009-04-25 06:39:17Z sigmax $
+ */
+if ( basename( $_SERVER[ 'SCRIPT_NAME' ] ) == basename( __FILE__ ) ) { exit; }
+
+// version
+define( 'BLOCKEN_VERSION'        , '1.0.4' );
+
+// php ini
+define( 'BLOCKEN_ERROR_REPORTING', E_ALL ^ E_NOTICE );
+define( 'BLOCKEN_DISPLAY_ERRORS' , 0 );
+define( 'BLOCKEN_PEAR_PATH'      , '' );
+define( 'BLOCKEN_ERROR_LOG'      , '' );
+
+if ( '' != BLOCKEN_PEAR_PATH ) { ini_set( 'include_path', BLOCKEN_PEAR_PATH ); }
+
+if ( $bAutoPrependFile ) { return; }
+
+require_once 'Console/Getopt.php';
+require_once 'Log.php';
+
+// upgrade package url
+define( 'BLOCKEN_UPGRADE_URL'    , 'http://blocken.sourceforge.jp/BlockenPackage.zip' );
+
+// WEB <=> CONSOLE
+define( 'BLOCKEN_WEB'            , 'web' );
+define( 'BLOCKEN_CONSOLE'        , 'console' );
+if ( isset( $_SERVER[ 'SERVER_NAME' ] ) )
+{
+    define( 'BLOCKEN_MODE'       , BLOCKEN_WEB );
+}
+else
+{
+    define( 'BLOCKEN_MODE'       , BLOCKEN_CONSOLE );
+    $_SERVER[ 'SERVER_NAME' ] = false;
+}
+
+// Windows <=> UNIX
+define( 'BLOCKEN_WINDOWS'        , 'win' );
+define( 'BLOCKEN_UNIX'           , 'unix' );
+if ( preg_match( '/^win/i', PHP_OS ) )
+{
+    define( 'BLOCKEN_OS'         , BLOCKEN_WINDOWS );
+    if ( ! defined( 'DIRECTORY_SEPARATOR' ) ) define( 'DIRECTORY_SEPARATOR', '\\' );
+    if ( ! defined( 'PATH_SEPARATOR' ) ) define( 'PATH_SEPARATOR', ';' );
+}
+else
+{
+    define( 'BLOCKEN_OS'         , BLOCKEN_UNIX );
+    if ( ! defined( 'DIRECTORY_SEPARATOR' ) ) define( 'DIRECTORY_SEPARATOR', '/' );
+    if ( ! defined( 'PATH_SEPARATOR' ) ) define( 'PATH_SEPARATOR', ':' );
+}
+
+// dir
+define( 'BLOCKEN_BASE'           , dirname( __FILE__ ) );
+define( 'BLOCKEN_ROOT_DIR'       , substr( BLOCKEN_BASE, 0, strrpos( BLOCKEN_BASE, DIRECTORY_SEPARATOR ) ) );
+define( 'BLOCKEN_BIN_DIR'        , BLOCKEN_BASE . '/bin' );
+define( 'BLOCKEN_DATA_DIR'       , BLOCKEN_BASE . '/data' );
+define( 'BLOCKEN_LIB_DIR'        , BLOCKEN_BASE . '/lib' );
+define( 'BLOCKEN_LOG_DIR'        , BLOCKEN_BASE . '/log' );
+define( 'BLOCKEN_TMP_DIR'        , BLOCKEN_BASE . '/tmp' );
+define( 'BLOCKEN_TEMPLATE_DIR'   , BLOCKEN_BASE . '/template' );
+define( 'BLOCKEN_SCRIPT_DIR'     , BLOCKEN_BASE . '/script' );
+define( 'BLOCKEN_SIGMA_CACHE_DIR', BLOCKEN_BASE . '/sigma_cache' );
+define( 'BLOCKEN_HTML_CACHE_DIR' , BLOCKEN_BASE . '/html_cache' );
+define( 'BLOCKEN_DOC_DIR'        , BLOCKEN_ROOT_DIR . '/doc' );
+define( 'BLOCKEN_TEMPLATE_NAME'  , 'template' );
+define( 'BLOCKEN_CACHE_NAME'     , 'cache' );
+
+// url
+define( 'BLOCKEN_HTTP_URL'       , 'http://' . $_SERVER[ 'SERVER_NAME' ] );
+define( 'BLOCKEN_HTTPS_URL'      , 'https://' . $_SERVER[ 'SERVER_NAME' ] );
+// BlockenへのURLをドメイン名以降で入力 ex) http://example.com/blocken/ → /blocken
+define( 'BLOCKEN_ROOT_PATH'      , '' );
+define( 'BLOCKEN_IMG_PATH'       , BLOCKEN_ROOT_PATH . '/img' );
+define( 'BLOCKEN_CSS_PATH'       , BLOCKEN_ROOT_PATH . '/css' );
+define( 'BLOCKEN_JS_PATH'        , BLOCKEN_ROOT_PATH . '/js' );
+define( 'BLOCKEN_DOC_PATH'       , BLOCKEN_ROOT_PATH . '/doc' );
+
+// debug
+// デバッグの有無
+define( 'BLOCKEN_DEBUG_MODE'     , true );
+// 遅延処理の時間(オーバーすると警告がでます)
+define( 'BLOCKEN_TIME_OVER'      , 0.500 );
+// デバッグを常に出力する
+define( 'BLOCKEN_ALWAYS_DEBUG'   , false );
+// デバッグを出力するネットワーク一覧
+define( 'BLOCKEN_IS_MEMBER'      , BLOCKEN_DATA_DIR . '/IP_Member.txt' );
+
+// mobile
+// モバイル機能の有無
+define( 'BLOCKEN_MOBILE_USE'     , false );
+// デバッグ時のユーザエージェント
+define( 'BLOCKEN_MOBI_USERAGENT' , null );
+// 帯域外のIPアドレスからのアクセスかチェックする
+define( 'BLOCKEN_MOBI_ACCESSCHK' , false );
+// 帯域外のIPアドレスからのアクセスの場合に表示するページ
+define( 'BLOCKEN_MOBI_ACCESSERR' , BLOCKEN_DATA_DIR . '/access_err.html' );
+// 公式サイトの有無
+define( 'BLOCKEN_MOBI_OFFCIAL'   , false );
+// 公式サイトがオープンしていないキャリアで表示するページ
+define( 'BLOCKEN_MOBI_OFFCIALERR', BLOCKEN_DATA_DIR . '/offcial_unsupported.html' );
+// 非会員が有料ページを閲覧した場合に表示するページ
+define( 'BLOCKEN_MOBI_REGIST'    , BLOCKEN_DATA_DIR . '/regist.html' );
+// 会員情報登録ページ
+define( 'BLOCKEN_MOBI_REGIST_URL', BLOCKEN_HTTP_URL . BLOCKEN_ROOT_PATH . '/sample/mymenu/regist.php' );
+// 会員情報削除ページ
+define( 'BLOCKEN_MOBI_EXPIRE_URL', BLOCKEN_HTTP_URL . BLOCKEN_ROOT_PATH . '/sample/mymenu/expire.php' );
+// 自動ヘッダの出力(非使用=「null」 / 使用=「ファイルパス(BLOCKEN_DATA_DIR . '/header.html')」)
+define( 'BLOCKEN_MOBI_AUTOHEADER', BLOCKEN_DATA_DIR . '/header.html' );
+// 自動フッタの出力(非使用=「null」 / 使用=「ファイルパス(BLOCKEN_DATA_DIR . '/footer.html')」)
+define( 'BLOCKEN_MOBI_AUTOFOOTER', BLOCKEN_DATA_DIR . '/footer.html' );
+// システムエラーの場合に表示するページ
+define( 'BLOCKEN_MOBI_SYSTEMERR' , BLOCKEN_DATA_DIR . '/system_err.html' );
+define( 'BLOCKEN_MOBI_P_TEMPLATE', BLOCKEN_TEMPLATE_NAME );
+define( 'BLOCKEN_MOBI_P_CACHE'   , BLOCKEN_CACHE_NAME );
+// 検索エンジンのクローラー一覧
+define( 'BLOCKEN_MOBI_P_IPLIST'  , BLOCKEN_DATA_DIR . '/IP_Robots.txt' );
+// PCからのアクセスの場合に表示する案内ページ
+define( 'BLOCKEN_MOBI_P_REDIRECT', BLOCKEN_DATA_DIR . '/pc_redirect.html' );
+// デバッグ時用ユーザID(PC)
+define( 'BLOCKEN_MOBI_P_DEBUGUID', 'DEBUG-PC' );
+// DoCoMo公式サイトの有無
+define( 'BLOCKEN_MOBI_D_OFFCIAL' , false );
+define( 'BLOCKEN_MOBI_D_TEMPLATE', BLOCKEN_TEMPLATE_NAME . '/d' );
+define( 'BLOCKEN_MOBI_D_CACHE'   , BLOCKEN_CACHE_NAME . '/d' );
+// DoCoMoサーバ一覧
+define( 'BLOCKEN_MOBI_D_IPLIST'  , BLOCKEN_DATA_DIR . '/IP_DoCoMo.txt' );
+define( 'BLOCKEN_MOBI_D_IP_URL'  , 'http://www.nttdocomo.co.jp/service/imode/make/content/ip/' );
+define( 'BLOCKEN_MOBI_D_MYMENU'  , 'http://w1m.docomo.ne.jp/cp/regst' );
+define( 'BLOCKEN_MOBI_D_UID'     , 'NULLGWDOCOMO' );
+// DoCoMoから割り当てられたCID
+define( 'BLOCKEN_MOBI_D_CID'     , 'xxxxxxxxxxx' );
+// DoCoMo端末一覧表
+define( 'BLOCKEN_MOBI_D_MAP'     , BLOCKEN_DATA_DIR . '/DoCoMoMap.xml' );
+define( 'BLOCKEN_MOBI_D_MAP_URL' , 'http://www.nttdocomo.co.jp/service/imode/make/content/spec/screen_area/' );
+define( 'BLOCKEN_MOBI_D_FLA_URL' , 'http://www.nttdocomo.co.jp/service/imode/make/content/spec/flash/' );
+define( 'BLOCKEN_MOBI_D_PDF_URL' , 'http://www.nttdocomo.co.jp/service/func_tool/pdf/compatible_model/' );
+// 公式サイトでユーザIDが取得できなかった時と通知をなしでシリアル番号が取得できた場合に表示するページ
+define( 'BLOCKEN_MOBI_D_UIDERR'  , BLOCKEN_DATA_DIR . '/system_err.html' );
+// 認証に使用するユーザIDを選択(GUID=iモードID / UTN=シリアル番号)
+define( 'BLOCKEN_MOBI_D_AUTHUID' , 'GUID' );
+define( 'BLOCKEN_MOBI_D_GUID'    , 'ON' );
+// iモードIDの非通知時に表示するページ
+define( 'BLOCKEN_MOBI_D_GUIDERR' , BLOCKEN_DATA_DIR . '/guid_err.html' );
+// シリアル番号の取得確認を表示するページ
+define( 'BLOCKEN_MOBI_D_UTN'     , BLOCKEN_DATA_DIR . '/utn.html' );
+// HTMLVersion2.0以下の端末を非対応にする場合に表示するページ
+// (対応=「null」 / 非対応=「ファイルパス(BLOCKEN_DATA_DIR . '/unsupported.html')」)
+define( 'BLOCKEN_MOBI_D_HV2ERR'  , BLOCKEN_DATA_DIR . '/unsupported.html' );
+// PDC端末を非対応にする場合に表示するページ
+// (対応=「null」 / 非対応=「ファイルパス(BLOCKEN_DATA_DIR . '/unsupported.html')」)
+define( 'BLOCKEN_MOBI_D_PDCERR'  , null );
+// デバッグ時用ユーザID(DoCoMo)
+define( 'BLOCKEN_MOBI_D_DEBUGUID', '01DEBUG-DOCOMO' );
+// EZweb公式サイトの有無
+define( 'BLOCKEN_MOBI_E_OFFCIAL' , false );
+define( 'BLOCKEN_MOBI_E_TEMPLATE', BLOCKEN_TEMPLATE_NAME . '/e' );
+define( 'BLOCKEN_MOBI_E_CACHE'   , BLOCKEN_CACHE_NAME . '/e' );
+// EZwebサーバ一覧
+define( 'BLOCKEN_MOBI_E_IPLIST'  , BLOCKEN_DATA_DIR . '/IP_EZweb.txt' );
+define( 'BLOCKEN_MOBI_E_IP_URL'  , 'http://www.au.kddi.com/ezfactory/tec/spec/ezsava_ip.html' );
+define( 'BLOCKEN_MOBI_E_REGIST'  , 'http://emr.datacenter.ne.jp/regist/getsubscriberid.cgi' );
+define( 'BLOCKEN_MOBI_E_EXPIRE'  , 'http://emr.datacenter.ne.jp/regist/getsubscriberid3.cgi' );
+define( 'BLOCKEN_MOBI_E_LT'      , '3600' );
+define( 'BLOCKEN_MOBI_E_FLG'     , '00' );
+// EZwebから割り当てられたCPコード
+define( 'BLOCKEN_MOBI_E_CP'      , 'xxxxx' );
+// EZwebから割り当てられたSCコード
+define( 'BLOCKEN_MOBI_E_SC'      , 'xxxxx' );
+// EZwebユーザ認証モジュールのパス ※同封してませんのでご注意してください(セーフモードでは動作しません)
+define( 'BLOCKEN_MOBI_E_AUTHCHK' , BLOCKEN_DATA_DIR . '/authcheck' );
+// EZwebユーザ認証の間隔(秒)(0=認証なし / -1=毎回)
+define( 'BLOCKEN_MOBI_E_AUTHTIME', 0 );
+// ブックマークの制限(なし=「null」 / あり=「ファイルパス(BLOCKEN_HTTP_URL . BLOCKEN_ROOT_PATH . '/')」)
+define( 'BLOCKEN_MOBI_E_BOOKMARK', BLOCKEN_HTTP_URL . BLOCKEN_ROOT_PATH . '/' );
+// EZ番号の非通知時に表示するページ
+define( 'BLOCKEN_MOBI_E_SUBNOERR', BLOCKEN_DATA_DIR . '/subno_err.html' );
+// HDML端末を非対応にする場合に表示するページ
+// (対応=「null」 / 非対応=「ファイルパス(BLOCKEN_DATA_DIR . '/unsupported.hdml')」)
+define( 'BLOCKEN_MOBI_E_HDMLERR' , BLOCKEN_DATA_DIR . '/unsupported.hdml' );
+// CDMA1X端末を非対応にする場合に表示するページ
+// (対応=「null」 / 非対応=「ファイルパス(BLOCKEN_DATA_DIR . '/unsupported.html')」)
+define( 'BLOCKEN_MOBI_E_CDMAERR' , null );
+// デバッグ時用ユーザID(EZweb)
+define( 'BLOCKEN_MOBI_E_DEBUGUID', 'DEBUG-EZWEB' );
+// SoftBank公式サイトの有無
+define( 'BLOCKEN_MOBI_S_OFFCIAL' , false );
+define( 'BLOCKEN_MOBI_S_TEMPLATE', BLOCKEN_TEMPLATE_NAME . '/s' );
+define( 'BLOCKEN_MOBI_S_CACHE'   , BLOCKEN_CACHE_NAME . '/s' );
+// SoftBankサーバ一覧
+define( 'BLOCKEN_MOBI_S_IPLIST'  , BLOCKEN_DATA_DIR . '/IP_SoftBank.txt' );
+define( 'BLOCKEN_MOBI_S_IP_URL'  , 'http://creation.mb.softbank.jp/web/web_ip.html' );
+define( 'BLOCKEN_MOBI_S_REGIST'  , 'http://JPHONE/CONFON' );
+define( 'BLOCKEN_MOBI_S_EXPIRE'  , 'http://JPHONE/CONFOFF' );
+define( 'BLOCKEN_MOBI_S_UID'     , '1' );
+// SoftBankから割り当てられたSID
+define( 'BLOCKEN_MOBI_S_SID'     , 'xxxx' );
+// SoftBank端末一覧表
+define( 'BLOCKEN_MOBI_S_MAP'     , BLOCKEN_DATA_DIR . '/SoftBankMap.xml' );
+define( 'BLOCKEN_MOBI_S_MAP_URL' , 'http://creation.mb.softbank.jp/terminal/?lup=y&cat=http' );
+define( 'BLOCKEN_MOBI_S_FLA_URL' , 'http://creation.mb.softbank.jp/terminal/?lup=y&cat=service' );
+// ユーザIDの非通知時に表示するページ
+define( 'BLOCKEN_MOBI_S_UIDERR'  , BLOCKEN_DATA_DIR . '/uid_err.html' );
+// C型端末を非対応にする場合に表示するページ
+// (対応=「null」 / 非対応=「ファイルパス(BLOCKEN_DATA_DIR . '/unsupported.html')」)
+define( 'BLOCKEN_MOBI_S_TYPECERR', BLOCKEN_DATA_DIR . '/unsupported.html' );
+// P型端末を非対応にする場合に表示するページ
+// (対応=「null」 / 非対応=「ファイルパス(BLOCKEN_DATA_DIR . '/unsupported.html')」)
+define( 'BLOCKEN_MOBI_S_TYPEPERR', null );
+// W型端末を非対応にする場合に表示するページ
+// (対応=「null」 / 非対応=「ファイルパス(BLOCKEN_DATA_DIR . '/unsupported.html')」)
+define( 'BLOCKEN_MOBI_S_TYPEWERR', null );
+// デバッグ時用ユーザID(SoftBank)
+define( 'BLOCKEN_MOBI_S_DEBUGUID', '0DEBUG-SOFTBANK' );
+define( 'BLOCKEN_MOBI_IMG_DIR'   , BLOCKEN_ROOT_DIR . '/img' );
+define( 'BLOCKEN_EMOJI_PATH'     , BLOCKEN_IMG_PATH . '/emoji' );
+define( 'BLOCKEN_PAGE_CACHE_DIR' , BLOCKEN_HTML_CACHE_DIR . '/_page' );
+define( 'BLOCKEN_IMG_CACHE_DIR'  , BLOCKEN_HTML_CACHE_DIR . '/_img' );
+
+// database
+define( 'BLOCKEN_DB_DSN_SAMPLE'  , 'mysql://hoge:hoge@localhost/sample' );
+
+// log
+switch ( BLOCKEN_MODE )
+{
+    case BLOCKEN_CONSOLE:
+        define( 'BLOCKEN_LOG_HANDLER', 'console' );
+        define( 'BLOCKEN_LOG_NAME'   , BLOCKEN_LOG_DIR . '/jade_' . date( 'Ymd' ) . '.log' );
+        define( 'BLOCKEN_LOG_IDENT'  , '' );
+        $aryLogConf = array(
+            'lineFormat' => '%1$s [%3$s] %4$s in %5$s on line %6$s',
+            'timeFormat' => '%Y/%m/%d %H:%M:%S'
+        );
+        define( 'BLOCKEN_LOG_CONF'   , serialize( $aryLogConf ) );
+        define( 'BLOCKEN_LOG_LEVEL'  , PEAR_LOG_DEBUG );
+        break;
+
+    default:
+        define( 'BLOCKEN_LOG_HANDLER', 'file' );
+        define( 'BLOCKEN_LOG_NAME'   , BLOCKEN_LOG_DIR . '/blocken_' . date( 'Ymd' ) . '.log' );
+        define( 'BLOCKEN_LOG_IDENT'  , '' );
+        $aryLogConf = array(
+            'lineFormat' => '%1$s [%3$s] %4$s in %5$s on line %6$s',
+            'timeFormat' => '%Y/%m/%d %H:%M:%S'
+        );
+        define( 'BLOCKEN_LOG_CONF'   , serialize( $aryLogConf ) );
+        define( 'BLOCKEN_LOG_LEVEL'  , PEAR_LOG_DEBUG );
+        break;
+}
+
+// auth
+define( 'BLOCKEN_AUTH_USE'       , true );
+define( 'BLOCKEN_AUTH_MODE'      , 'form' );
+define( 'BLOCKEN_AUTH_DRIVER'    , 'File' );
+$aryAuthOptionList = array(
+    'File' => array(
+        'file'        => BLOCKEN_BASE . '/.htpasswd_sample'
+    ),
+    'DB' => array(
+        'dsn'         => BLOCKEN_DB_DSN_SAMPLE,
+        'table'       => 'auth',
+        'usernamecol' => 'user',
+        'passwordcol' => 'passwd',
+        'cryptType'   => 'none'
+    ),
+    'LDAP' => array(
+        'host'        => 'localhost',
+        'port'        => '389',
+        'version'     => 3,
+        'basedn'      => 'o=example,o=work,c=jp',
+        'binddn'      => 'cn=manager,o=work,c=jp',
+        'bindpw'      => 'hogehoge',
+        'userfilter'  => ''
+    )
+);
+$aryAuthDefaultOption = array(
+    'sessionName'    => '_blocken_auth',
+    'sessionSharing' => false
+);
+$aryAuthOption = $aryAuthOptionList[ BLOCKEN_AUTH_DRIVER ] + $aryAuthDefaultOption;
+define( 'BLOCKEN_AUTH_OPTION'    , serialize( $aryAuthOption ) );
+
+// web command
+define( 'BLOCKEN_CMD_USE'        , true );
+define( 'BLOCKEN_CMD_MEMBER_ONLY', true );
+define( 'BLOCKEN_CMD_DEMO'       , false );
+define( 'BLOCKEN_CMD_DRIVER'     , 'File' );
+$aryCmdOptionList = array(
+    'File' => array(
+        'file'        => BLOCKEN_BASE . '/.htpasswd_sample'
+    ),
+    'DB' => array(
+        'dsn'         => BLOCKEN_DB_DSN_SAMPLE,
+        'table'       => 'auth',
+        'usernamecol' => 'user',
+        'passwordcol' => 'passwd',
+        'cryptType'   => 'none'
+    ),
+    'LDAP' => array(
+        'host'        => 'localhost',
+        'port'        => '389',
+        'version'     => 3,
+        'basedn'      => 'o=example,o=work,c=jp',
+        'binddn'      => 'cn=manager,o=work,c=jp',
+        'bindpw'      => 'hogehoge',
+        'userfilter'  => ''
+    )
+);
+$aryCmdDefaultOption = array(
+    'sessionName'    => '_blocken_cmd',
+    'sessionSharing' => false
+);
+$aryCmdOption = $aryCmdOptionList[ BLOCKEN_CMD_DRIVER ] + $aryCmdDefaultOption;
+define( 'BLOCKEN_CMD_OPTION'     , serialize( $aryCmdOption ) );
+
+// cookie
+define( 'BLOCKEN_COOKIE_USE'     , true );
+define( 'BLOCKEN_COOKIE_EXPIRE'  , 60 * 60 * 24 * 30 );
+define( 'BLOCKEN_COOKIE_PATH'    , '/' );
+define( 'BLOCKEN_COOKIE_DOMAIN'  , '' );
+define( 'BLOCKEN_COOKIE_SECURE'  , false );
+
+// session
+define( 'BLOCKEN_SESSION_USE'    , true );
+define( 'BLOCKEN_SESSION_NAME'   , '_sid' );
+define( 'BLOCKEN_SESSION_EXPIRE' , 60 * 60 );
+define( 'BLOCKEN_SESSION_IDLE'   , 60 * 30 );
+
+// cache
+/**
+ * DBキャッシュの場合に使用するテーブル
+ *
+ * CREATE TABLE cache_[block|page|image] (
+ *   id         VARCHAR(32) NOT NULL DEFAULT '',
+ *   cachegroup VARCHAR(127) NOT NULL DEFAULT '',
+ *   cachedata  BLOB NOT NULL DEFAULT '',
+ *   userdata   VARCHAR(255) NOT NULL DEFAULT '',
+ *   expires    INT(9) NOT NULL DEFAULT 0,
+ *   changed    TIMESTAMP(14) NOT NULL,
+ *   INDEX (expires),
+ *   PRIMARY KEY (id, cachegroup)
+ * );
+ */
+define( 'BLOCKEN_CACHE_EXPIRE'   , 60 * 60 * 24 * 30 );
+define( 'BLOCKEN_CACHE_DRIVER'   , 'file' );
+$aryCacheOption = array(
+    'block' => array(
+        'file' => array(
+            'cache_dir'   => BLOCKEN_HTML_CACHE_DIR
+        ),
+        'db' => array(
+            'dsn'         => BLOCKEN_DB_DSN_SAMPLE,
+            'cache_table' => 'cache_block'
+        )
+    ),
+    'page' => array(
+        'file' => array(
+            'cache_dir'   => BLOCKEN_PAGE_CACHE_DIR
+        ),
+        'db' => array(
+            'dsn'         => BLOCKEN_DB_DSN_SAMPLE,
+            'cache_table' => 'cache_page'
+        )
+    ),
+    'image' => array(
+        'file' => array(
+            'cache_dir'   => BLOCKEN_IMG_CACHE_DIR
+        ),
+        'db' => array(
+            'dsn'         => BLOCKEN_DB_DSN_SAMPLE,
+            'cache_table' => 'cache_image'
+        )
+    )
+);
+define( 'BLOCKEN_CACHE_BLOCK'    , serialize( $aryCacheOption[ 'block' ][ BLOCKEN_CACHE_DRIVER ] ) );
+define( 'BLOCKEN_CACHE_PAGE'     , serialize( $aryCacheOption[ 'page' ][ BLOCKEN_CACHE_DRIVER ] ) );
+define( 'BLOCKEN_CACHE_IMAGE'    , serialize( $aryCacheOption[ 'image' ][ BLOCKEN_CACHE_DRIVER ] ) );
+
+// command line option
+define( 'BLOCKEN_CONSOLE_SOPT'   , 'ue:pih' );
+$aryLongOption = array( 'exec=', 'upgrade', 'package==', 'make_iplist', 'show_iplist',
+                        'make_map', 'make_doc', 'get_doc==', 'clean_doc', 'clean_cache',
+                        'show_log==', 'clean_log', 'clean_tmp', 'phpinfo', 'info', 'help' );
+define( 'BLOCKEN_CONSOLE_LOPT'   , serialize( $aryLongOption ) );
+
+// curl
+define( 'BLOCKEN_CURL_USERAGENT' , 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)' );
+$aryCurlOption = array(
+    CURLOPT_HEADER         => false,
+    CURLOPT_FAILONERROR    => true,
+//  CURLOPT_PROXY          => 'example.com:8080',
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_TIMEOUT        => 30
+);
+define( 'BLOCKEN_CURL_OPTION'    , serialize( $aryCurlOption ) );
+?>

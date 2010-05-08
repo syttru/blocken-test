@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+<title>Blocken RSSサンプル</title>
+<link>http://example.com/</link>
+<language>ja</language>
+<block type="dynamic" name="rss_sample" />
+</channel>
+</rss>
